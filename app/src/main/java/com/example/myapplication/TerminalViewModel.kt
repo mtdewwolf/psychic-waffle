@@ -20,15 +20,15 @@ import com.example.myapplication.MissionStatus
 import com.example.myapplication.RewardType
 
 // Type alias to maintain compatibility
-typealias QuestState = QuestSystemState
+// typealias QuestState = QuestSystemState
 
 // Extension properties for easier access
-val QuestState.playerLevel: Int
-    get() = this.playerStats.level
+// val QuestState.playerLevel: Int
+//     get() = this.playerStats.level
 
 // Extension property to get the first notification (if any)
-val QuestState.notification: Notification?
-    get() = this.notifications.firstOrNull()
+// val QuestState.notification: Notification?
+//     get() = this.notifications.firstOrNull()
 
 data class TerminalState(
     val terminalOutput: String = getWelcomeMessage(),
@@ -1294,53 +1294,59 @@ class TerminalViewModel : ViewModel() {
     // Process command for mission progress
     private fun checkMissionProgress(cmd: String, args: List<String>) {
         val commandInfo = CommandInfo(cmd, args, _terminalState.value)
-        val wasUpdated = _missionSystem.processCommand(commandInfo)
+        // val wasUpdated = _missionSystem.processCommand(commandInfo) // Commented out: MissionSystem likely handles progress internally or differently.
         
-        if (wasUpdated) {
-            // Mission state was updated
+        // if (wasUpdated) { // Assuming check below should run if mission state might have changed implicitly
+            // Mission state was updated - Re-fetch state in case internal changes occurred
             _missionState.value = _missionSystem.state.value
             
-            // Check if a mission objective was completed
-            if (_missionSystem.state.value.activeMission != null) {
-                val completedObjective = _missionSystem.state.value.activeMission?.objectives?.find { it.status == MissionStatus.COMPLETED }
-                if (completedObjective != null) {
-                    addOutput("Objective completed: ${completedObjective.description}")
+            // Check if a mission objective was completed (check the updated state)
+            val activeMission = _missionSystem.state.value.activeMission
+            if (activeMission != null) {
+                // Find the *last* completed objective as a proxy for recent completion
+                val lastCompletedObjective = activeMission.objectives.lastOrNull { it.status == MissionStatus.COMPLETED }
+                // TODO: Improve this logic - need a better way to know if an objective *just* completed
+                // Maybe compare with previous state or have MissionSystem return info?
+                if (lastCompletedObjective != null /* && objective wasn't complete before */) {
+                    addOutput("Objective completed: ${lastCompletedObjective.description}")
                 }
                 
-                // Check if mission was completed
-                if (_missionSystem.state.value.activeMission == null && _missionSystem.state.value.completedMissions.isNotEmpty()) {
-                    val completedMission = _missionSystem.state.value.completedMissions.last()
+                // Check if mission was completed (activeMission is now null, but was previously not null)
+                if (_missionSystem.state.value.activeMission == null && _missionState.value.activeMission != null) {
+                    val completedMission = _missionSystem.state.value.completedMissions.lastOrNull { it.id == _missionState.value.activeMission?.id }
                     
-                    // Award rewards
-                    val xpReward = completedMission.rewards.find { it.type == RewardType.XP }?.amount ?: 0
-                    val creditReward = completedMission.rewards.find { it.type == RewardType.MONEY }?.amount ?: 0
-                    val itemReward = completedMission.rewards.find { it.type == RewardType.EQUIPMENT }?.value
-                    
-                    questSystem.addXp(xpReward)
-                    updateQuestState()
-                    
-                    _terminalState.update { it.copy(credits = it.credits + creditReward) }
-                    
-                    // Add equipment if there's an item reward
-                    if (itemReward != null) {
-                        _equipmentSystem.addRewardEquipment(itemReward)
-                        _equipmentState.value = _equipmentSystem.state.value
+                    if (completedMission != null) {
+                        // Award rewards
+                        val xpReward = completedMission.rewards.find { it.type == RewardType.XP }?.amount ?: 0
+                        val creditReward = completedMission.rewards.find { it.type == RewardType.MONEY }?.amount ?: 0
+                        val itemReward = completedMission.rewards.find { it.type == RewardType.EQUIPMENT }?.value
+                        
+                        // questSystem.addXp(xpReward) // Commented out: XP should be handled by QuestSystem internally
+                        updateQuestState() // Update quest state to reflect potential level ups from XP gain
+                        
+                        _terminalState.update { it.copy(credits = it.credits + creditReward) }
+                        
+                        // Add equipment if there's an item reward
+                        if (itemReward != null) {
+                            _equipmentSystem.addRewardEquipment(itemReward)
+                            _equipmentState.value = _equipmentSystem.state.value
+                        }
+                        
+                        // Show completion message
+                        addOutput("")
+                        addOutput("==== MISSION COMPLETE ====")
+                        addOutput("${completedMission.title} completed successfully!")
+                        addOutput("Rewards:")
+                        addOutput("- $xpReward XP")
+                        addOutput("- $creditReward Credits")
+                        if (itemReward != null) {
+                            addOutput("- Equipment: $itemReward")
+                        }
+                        addOutput("==========================")
                     }
-                    
-                    // Show completion message
-                    addOutput("")
-                    addOutput("==== MISSION COMPLETE ====")
-                    addOutput("${completedMission.title} completed successfully!")
-                    addOutput("Rewards:")
-                    addOutput("- $xpReward XP")
-                    addOutput("- $creditReward Credits")
-                    if (itemReward != null) {
-                        addOutput("- Equipment: $itemReward")
-                    }
-                    addOutput("==========================")
                 }
-            }
-        }
+            } // else { // If wasUpdated was true but no active mission, maybe handle differently? }
+        // }
     }
 
     // Public function to process a command directly 

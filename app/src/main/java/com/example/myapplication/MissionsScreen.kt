@@ -18,8 +18,9 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.RadioButtonUnchecked
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -624,7 +625,7 @@ fun MissionDetailsDialog(
                             val statusIcon = if (objective.status == MissionStatus.COMPLETED) 
                                 Icons.Default.CheckCircle 
                             else 
-                                Icons.Filled.RadioButtonUnchecked
+                                Icons.Outlined.AddCircle
                             
                             Icon(
                                 imageVector = statusIcon,

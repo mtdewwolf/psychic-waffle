@@ -14,25 +14,22 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Paid
-import androidx.compose.material.icons.filled.Psychology
-import androidx.compose.material.icons.filled.Cable
-import androidx.compose.material.icons.filled.Assignment
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.outlined.RadioButtonUnchecked
-import androidx.compose.material.icons.outlined.RemoveCircleOutline
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -110,7 +107,7 @@ fun TerminalScreen(
                     Spacer(modifier = Modifier.width(16.dp))
                     
                     Icon(
-                        imageVector = Icons.Default.Paid,
+                        imageVector = Icons.Default.Star,
                         contentDescription = "Credits",
                         tint = Color.Green,
                         modifier = Modifier.size(16.dp)
@@ -128,7 +125,7 @@ fun TerminalScreen(
                     // Skills button
                     IconButton(onClick = onNavigateToSkills) {
                         Icon(
-                            imageVector = Icons.Default.Psychology,
+                            imageVector = Icons.Default.Settings,
                             contentDescription = "Skills",
                             tint = Color.Cyan
                         )
@@ -137,7 +134,7 @@ fun TerminalScreen(
                     // Equipment button
                     IconButton(onClick = onNavigateToEquipment) {
                         Icon(
-                            imageVector = Icons.Default.Cable,
+                            imageVector = Icons.Default.Lock,
                             contentDescription = "Equipment",
                             tint = Color.Yellow
                         )
@@ -146,7 +143,7 @@ fun TerminalScreen(
                     // Missions button
                     IconButton(onClick = onNavigateToMissions) {
                         Icon(
-                            imageVector = Icons.Default.Assignment,
+                            imageVector = Icons.Default.MailOutline,
                             contentDescription = "Missions",
                             tint = Color.Green
                         )
@@ -232,7 +229,7 @@ fun TerminalScreen(
                             val statusIcon = if (objective.status == QuestStatus.COMPLETED) 
                                 Icons.Default.CheckCircle 
                             else 
-                                Icons.Outlined.RadioButtonUnchecked
+                                Icons.Outlined.CheckCircle
                             
                             Icon(
                                 imageVector = statusIcon,
