@@ -303,9 +303,6 @@ fun defaultRemoteFileSystems(): Map<String, Map<String, FileSystemNode>> {
 }
 
 class TerminalViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(TerminalState())
-    val uiState: StateFlow<TerminalState> = _uiState.asStateFlow()
-    
     // Add terminalState property
     private val _terminalState = MutableStateFlow(TerminalState())
     val terminalState: StateFlow<TerminalState> = _terminalState.asStateFlow()
@@ -335,9 +332,6 @@ class TerminalViewModel : ViewModel() {
     val navigateToAchievements: StateFlow<Boolean> = _navigateToAchievements.asStateFlow()
     
     init {
-        // Initialize terminalState with the same values as uiState
-        _terminalState.value = _uiState.value
-        
         // Auto-start the tutorial quest
         questSystem.startQuest("tutorial")
         updateQuestState()
@@ -347,28 +341,6 @@ class TerminalViewModel : ViewModel() {
     fun addOutput(message: String) {
         _terminalState.update { 
             it.copy(output = it.output + message)
-        }
-    }
-    
-    fun updateCurrentCommand(command: String) {
-        _uiState.update { it.copy(currentCommand = command) }
-    }
-    
-    fun executeCommand() {
-        val currentState = _uiState.value
-        val command = currentState.currentCommand.trim()
-        
-        if (command.isEmpty()) {
-            return
-        }
-        
-        val output = processCommand(command, currentState)
-        
-        _uiState.update { 
-            it.copy(
-                terminalOutput = it.terminalOutput + "> " + command + "\n" + output + "\n",
-                currentCommand = ""
-            ) 
         }
     }
     
@@ -428,7 +400,7 @@ class TerminalViewModel : ViewModel() {
                 provideHint(state)
             }
             "clear" -> {
-                _uiState.update { it.copy(terminalOutput = "") }
+                _terminalState.update { it.copy(terminalOutput = "") }
                 ""
             }
             "pwd" -> {
@@ -443,7 +415,7 @@ class TerminalViewModel : ViewModel() {
             }
             "exit" -> {
                 if (state.isConnectedToTarget) {
-                    _uiState.update { 
+                    _terminalState.update { 
                         it.copy(
                             isConnectedToTarget = false,
                             currentTargetIp = "",
@@ -537,7 +509,7 @@ class TerminalViewModel : ViewModel() {
                 } else if (state.hasRootAccess) {
                     "You already have root privileges."
                 } else {
-                    _uiState.update { it.copy(hasRootAccess = true) }
+                    _terminalState.update { it.copy(hasRootAccess = true) }
                     
                     // Check for quest objective completion
                     questSystem.checkObjectiveCompletion(ObjectiveType.ESCALATE_PRIVILEGES)
@@ -770,7 +742,7 @@ class TerminalViewModel : ViewModel() {
         
         return when (node) {
             is FileSystemNode.Directory -> {
-                _uiState.update { it.copy(currentDirectory = normalizedPath) }
+                _terminalState.update { it.copy(currentDirectory = normalizedPath) }
                 ""
             }
             is FileSystemNode.File -> {
@@ -819,7 +791,7 @@ class TerminalViewModel : ViewModel() {
         
         // Generate some random IPs for demonstration
         val newTargets = listOf("192.168.1.105", "192.168.1.240", "192.168.1.12")
-        _uiState.update { it.copy(discoveredIps = newTargets) }
+        _terminalState.update { it.copy(discoveredIps = newTargets) }
         
         return """
         Scanning network...
@@ -850,7 +822,7 @@ class TerminalViewModel : ViewModel() {
             return "Unknown host: $ip"
         }
         
-        _uiState.update { 
+        _terminalState.update { 
             it.copy(
                 isConnectedToTarget = true,
                 currentTargetIp = ip,
@@ -962,7 +934,7 @@ class TerminalViewModel : ViewModel() {
         
         // Generate the same targets as scan for consistency
         val newTargets = listOf("192.168.1.105", "192.168.1.240", "192.168.1.12")
-        _uiState.update { it.copy(discoveredIps = newTargets) }
+        _terminalState.update { it.copy(discoveredIps = newTargets) }
         
         return """
         Starting Nmap 7.92 ( https://nmap.org ) at ${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}
