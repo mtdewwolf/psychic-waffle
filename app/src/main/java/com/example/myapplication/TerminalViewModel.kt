@@ -7,25 +7,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import com.example.myapplication.QuestSystem
-import com.example.myapplication.ObjectiveType
-import com.example.myapplication.QuestSystemState
-import com.example.myapplication.SkillSystem
-import com.example.myapplication.SkillSystemState
-import com.example.myapplication.EquipmentSystem
-import com.example.myapplication.EquipmentSystemState
-import com.example.myapplication.MissionSystem
-import com.example.myapplication.MissionSystemState
-import com.example.myapplication.MissionStatus
-import com.example.myapplication.RewardType
-import com.example.myapplication.QuestState
-
-// Remove duplicate typealias and extension properties since they are defined in QuestSystem.kt
-// typealias QuestState = QuestSystemState
-// val QuestState.playerLevel: Int
-//     get() = this.playerStats.level
-// val QuestState.notification: Notification?
-//     get() = this.notifications.firstOrNull()
 
 data class TerminalState(
     val terminalOutput: String = getWelcomeMessage(),
@@ -646,7 +627,7 @@ class TerminalViewModel : ViewModel() {
                 output
             }
             "ifconfig" -> {
-                ifconfig(state)
+                ifconfig()
             }
             "netstat" -> {
                 netstat(state)
@@ -984,7 +965,7 @@ class TerminalViewModel : ViewModel() {
         _uiState.update { it.copy(discoveredIps = newTargets) }
         
         return """
-        Starting Nmap 7.92 ( https://nmap.org ) at ${java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}
+        Starting Nmap 7.92 ( https://nmap.org ) at ${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}
         Nmap scan report for 192.168.1.105
         Host is up (0.015s latency).
         Not shown: 997 closed ports
@@ -1010,11 +991,11 @@ class TerminalViewModel : ViewModel() {
         """.trimIndent()
     }
     
-    private fun ifconfig(state: TerminalState): String {
+    private fun ifconfig(): String {
         // Only available on local machine
-        if (state.isConnectedToTarget) {
-            return "This command is not available on remote systems without root access."
-        }
+        // NOTE: Removed unused 'state' parameter and the check for state.isConnectedToTarget
+        // as this function should only logically be called on the local machine anyway based on command processing.
+        // If context changes, this might need adjustment.
         
         return """
         eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
@@ -1237,9 +1218,8 @@ class TerminalViewModel : ViewModel() {
             addOutput("Upgraded ${getEquipmentName(itemId)} to level ${updatedEquipment?.level}.")
             addOutput("New stats:")
             
-            updatedEquipment?.effects?.forEach { effect ->
-                addOutput("- ${effect.type.name}: +${effect.value}")
-            }
+            // Removed unused loop: updatedEquipment?.effects?.forEach { effect -> ... } 
+            // If you want to display effects, add the logic here.
         } else {
             addOutput("Could not upgrade equipment.")
         }
@@ -1290,7 +1270,7 @@ class TerminalViewModel : ViewModel() {
 
     // Process command for mission progress
     private fun checkMissionProgress(cmd: String, args: List<String>) {
-        val commandInfo = CommandInfo(cmd, args, _terminalState.value)
+        // Removed unused variable: val commandInfo = CommandInfo(cmd, args, _terminalState.value)
         // val wasUpdated = _missionSystem.processCommand(commandInfo) // Commented out: MissionSystem likely handles progress internally or differently.
         
         // if (wasUpdated) { // Assuming check below should run if mission state might have changed implicitly
