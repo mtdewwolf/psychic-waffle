@@ -18,15 +18,12 @@ import com.example.myapplication.MissionSystem
 import com.example.myapplication.MissionSystemState
 import com.example.myapplication.MissionStatus
 import com.example.myapplication.RewardType
+import com.example.myapplication.QuestState
 
-// Type alias to maintain compatibility
+// Remove duplicate typealias and extension properties since they are defined in QuestSystem.kt
 // typealias QuestState = QuestSystemState
-
-// Extension properties for easier access
 // val QuestState.playerLevel: Int
 //     get() = this.playerStats.level
-
-// Extension property to get the first notification (if any)
 // val QuestState.notification: Notification?
 //     get() = this.notifications.firstOrNull()
 
@@ -357,12 +354,12 @@ class TerminalViewModel : ViewModel() {
     val navigateToAchievements: StateFlow<Boolean> = _navigateToAchievements.asStateFlow()
     
     init {
+        // Initialize terminalState with the same values as uiState
+        _terminalState.value = _uiState.value
+        
         // Auto-start the tutorial quest
         questSystem.startQuest("tutorial")
         updateQuestState()
-        
-        // Initialize terminalState with the same values as uiState
-        _terminalState.value = _uiState.value
     }
 
     // Add addOutput method

@@ -898,14 +898,180 @@ class MissionGenerator {
         }
         
         return when (type) {
+            MissionType.TUTORIAL -> generateTutorialMissionSteps(numberOfSteps)
+            MissionType.NETWORK_SCAN -> generateScanMissionSteps(numberOfSteps)
+            MissionType.SERVER_BREACH -> generateHackMissionSteps(numberOfSteps)
+            MissionType.DATA_THEFT -> generateExtractMissionSteps(numberOfSteps)
+            MissionType.VULNERABILITY -> generateHackMissionSteps(numberOfSteps)
+            MissionType.PERSISTENCE -> generatePlantMissionSteps(numberOfSteps)
+            MissionType.SOCIAL -> generateSocialMissionSteps(numberOfSteps)
+            MissionType.FORENSIC -> generateAnalyzeMissionSteps(numberOfSteps)
+            MissionType.STEALTH -> generateStealthMissionSteps(numberOfSteps)
+            MissionType.CUSTOM_EXPLOIT -> generateHackMissionSteps(numberOfSteps)
+            MissionType.STORY -> generateStoryMissionSteps(numberOfSteps)
             MissionType.HACK -> generateHackMissionSteps(numberOfSteps)
             MissionType.EXTRACT -> generateExtractMissionSteps(numberOfSteps)
             MissionType.PLANT -> generatePlantMissionSteps(numberOfSteps)
             MissionType.SCAN -> generateScanMissionSteps(numberOfSteps)
             MissionType.PROTECT -> generateProtectMissionSteps(numberOfSteps)
             MissionType.ANALYZE -> generateAnalyzeMissionSteps(numberOfSteps)
-            else -> throw IllegalArgumentException("Unsupported mission type")
         }
+    }
+    
+    // Generate steps for a tutorial mission
+    private fun generateTutorialMissionSteps(count: Int): List<MissionStep> {
+        val steps = mutableListOf<MissionStep>()
+        
+        steps.add(MissionStep(
+            description = "Learn basic commands",
+            targetCommand = "help",
+            alternativeCommands = listOf("commands", "tutorial")
+        ))
+        
+        steps.add(MissionStep(
+            description = "Navigate the file system",
+            targetCommand = "ls",
+            alternativeCommands = listOf("dir", "list")
+        ))
+        
+        steps.add(MissionStep(
+            description = "Read a file",
+            targetCommand = "cat",
+            alternativeCommands = listOf("read", "view")
+        ))
+        
+        if (count > 3) {
+            steps.add(MissionStep(
+                description = "Connect to a server",
+                targetCommand = "ssh",
+                alternativeCommands = listOf("connect")
+            ))
+            
+            steps.add(MissionStep(
+                description = "Scan the network",
+                targetCommand = "scan",
+                alternativeCommands = listOf("nmap")
+            ))
+        }
+        
+        return steps.take(count)
+    }
+    
+    // Generate steps for a social engineering mission
+    private fun generateSocialMissionSteps(count: Int): List<MissionStep> {
+        val steps = mutableListOf<MissionStep>()
+        
+        steps.add(MissionStep(
+            description = "Gather target information",
+            targetCommand = "research",
+            alternativeCommands = listOf("info_gather")
+        ))
+        
+        steps.add(MissionStep(
+            description = "Create phishing message",
+            targetCommand = "create_phish",
+            alternativeCommands = listOf("craft_message")
+        ))
+        
+        steps.add(MissionStep(
+            description = "Send phishing message",
+            targetCommand = "send_phish",
+            alternativeCommands = listOf("deliver")
+        ))
+        
+        if (count > 3) {
+            steps.add(MissionStep(
+                description = "Monitor response",
+                targetCommand = "monitor",
+                alternativeCommands = listOf("watch")
+            ))
+            
+            steps.add(MissionStep(
+                description = "Exploit response",
+                targetCommand = "exploit",
+                alternativeCommands = listOf("take_advantage")
+            ))
+        }
+        
+        return steps.take(count)
+    }
+    
+    // Generate steps for a stealth mission
+    private fun generateStealthMissionSteps(count: Int): List<MissionStep> {
+        val steps = mutableListOf<MissionStep>()
+        
+        steps.add(MissionStep(
+            description = "Disable security systems",
+            targetCommand = "disable_security",
+            alternativeCommands = listOf("bypass_security")
+        ))
+        
+        steps.add(MissionStep(
+            description = "Hide your presence",
+            targetCommand = "hide",
+            alternativeCommands = listOf("conceal")
+        ))
+        
+        steps.add(MissionStep(
+            description = "Avoid detection",
+            targetCommand = "avoid_detection",
+            alternativeCommands = listOf("stealth")
+        ))
+        
+        if (count > 3) {
+            steps.add(MissionStep(
+                description = "Cover your tracks",
+                targetCommand = "clean_logs",
+                alternativeCommands = listOf("erase_evidence")
+            ))
+            
+            steps.add(MissionStep(
+                description = "Maintain stealth",
+                targetCommand = "maintain_stealth",
+                alternativeCommands = listOf("stay_hidden")
+            ))
+        }
+        
+        return steps.take(count)
+    }
+    
+    // Generate steps for a story mission
+    private fun generateStoryMissionSteps(count: Int): List<MissionStep> {
+        val steps = mutableListOf<MissionStep>()
+        
+        steps.add(MissionStep(
+            description = "Follow story objective",
+            targetCommand = "story",
+            alternativeCommands = listOf("main_quest")
+        ))
+        
+        steps.add(MissionStep(
+            description = "Progress story",
+            targetCommand = "progress",
+            alternativeCommands = listOf("advance")
+        ))
+        
+        steps.add(MissionStep(
+            description = "Complete story objective",
+            targetCommand = "complete",
+            alternativeCommands = listOf("finish")
+        ))
+        
+        if (count > 3) {
+            steps.add(MissionStep(
+                description = "Unlock next story part",
+                targetCommand = "unlock",
+                alternativeCommands = listOf("reveal")
+            ))
+            
+            steps.add(MissionStep(
+                description = "Continue story",
+                targetCommand = "continue",
+                alternativeCommands = listOf("proceed")
+            ))
+        }
+        
+        return steps.take(count)
     }
     
     // Generate steps for a hack mission
@@ -1167,13 +1333,23 @@ class MissionGenerator {
     // Generate mission title and description based on type and target
     private fun generateMissionDetails(type: MissionType, target: TargetSystem, difficulty: DifficultyLevel): Pair<String, String> {
         val titlePrefix = when (type) {
+            MissionType.TUTORIAL -> "Tutorial"
+            MissionType.NETWORK_SCAN -> "Network Reconnaissance"
+            MissionType.SERVER_BREACH -> "System Breach"
+            MissionType.DATA_THEFT -> "Data Extraction"
+            MissionType.VULNERABILITY -> "Vulnerability Exploitation"
+            MissionType.PERSISTENCE -> "Persistence Operation"
+            MissionType.SOCIAL -> "Social Engineering"
+            MissionType.FORENSIC -> "Forensic Analysis"
+            MissionType.STEALTH -> "Stealth Operation"
+            MissionType.CUSTOM_EXPLOIT -> "Custom Exploit"
+            MissionType.STORY -> "Story Mission"
             MissionType.HACK -> "System Breach"
             MissionType.EXTRACT -> "Data Extraction"
             MissionType.PLANT -> "Payload Deployment"
             MissionType.SCAN -> "Network Reconnaissance"
             MissionType.PROTECT -> "System Defense"
             MissionType.ANALYZE -> "Data Analysis"
-            else -> throw IllegalArgumentException("Unsupported mission type")
         }
         
         val targetName = when (target) {
@@ -1225,13 +1401,23 @@ class MissionGenerator {
         val title = "$difficultyPrefix$titlePrefix: $targetName"
         
         val description = when (type) {
+            MissionType.TUTORIAL -> "Learn the basics of hacking in a safe training environment."
+            MissionType.NETWORK_SCAN -> "Perform comprehensive reconnaissance of $targetName network architecture and security."
+            MissionType.SERVER_BREACH -> "Gain unauthorized access to the $targetName systems and establish persistent control."
+            MissionType.DATA_THEFT -> "Infiltrate $targetName and extract sensitive data without being detected."
+            MissionType.VULNERABILITY -> "Identify and exploit vulnerabilities in $targetName systems."
+            MissionType.PERSISTENCE -> "Establish and maintain persistent access to $targetName systems."
+            MissionType.SOCIAL -> "Use social engineering techniques to gain access to $targetName systems."
+            MissionType.FORENSIC -> "Analyze digital evidence from $targetName to uncover critical information."
+            MissionType.STEALTH -> "Conduct operations within $targetName without detection."
+            MissionType.CUSTOM_EXPLOIT -> "Develop and deploy a custom exploit against $targetName systems."
+            MissionType.STORY -> "Progress through the main storyline by completing objectives in $targetName."
             MissionType.HACK -> "Gain unauthorized access to the $targetName systems and establish persistent control."
             MissionType.EXTRACT -> "Infiltrate $targetName and extract sensitive data without being detected."
             MissionType.PLANT -> "Infiltrate $targetName systems and deploy specialized software for future operations."
             MissionType.SCAN -> "Perform comprehensive reconnaissance of $targetName network architecture and security."
             MissionType.PROTECT -> "Defend $targetName systems from ongoing sophisticated cyber attacks."
             MissionType.ANALYZE -> "Analyze intercepted data from $targetName to extract actionable intelligence."
-            else -> throw IllegalArgumentException("Unsupported mission type")
         }
         
         return Pair(title, description)
